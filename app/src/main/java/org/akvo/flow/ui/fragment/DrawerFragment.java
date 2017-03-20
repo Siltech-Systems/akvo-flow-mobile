@@ -63,7 +63,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DrawerFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
-    private static final float ITEM_TEXT_SIZE = 14;
+    public static final float ITEM_TEXT_SIZE = 14;
 
     // Context menu IDs
     private static final int ID_DELETE_SURVEY = 0;
@@ -72,8 +72,8 @@ public class DrawerFragment extends Fragment implements LoaderManager.LoaderCall
 
     // ExpandableList's group IDs
     private static final int GROUP_USERS = 0;
-    private static final int GROUP_SURVEYS = 1;
-    private static final int GROUP_SETTINGS = 2;
+    public static final int GROUP_SURVEYS = 1;
+    public static final int GROUP_SETTINGS = 2;
 
     // Loader IDs
     private static final int LOADER_SURVEYS = 0;

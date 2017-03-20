@@ -28,14 +28,14 @@ import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.ExpandableListView;
 import android.widget.Toast;
 
 import org.akvo.flow.BuildConfig;
@@ -57,6 +57,7 @@ import org.akvo.flow.service.SurveyedDataPointSyncService;
 import org.akvo.flow.service.TimeCheckService;
 import org.akvo.flow.ui.Navigator;
 import org.akvo.flow.ui.fragment.DatapointsFragment;
+import org.akvo.flow.ui.fragment.DrawerAdapter;
 import org.akvo.flow.ui.fragment.DrawerFragment;
 import org.akvo.flow.ui.fragment.RecordListListener;
 import org.akvo.flow.util.ConstantUtil;
@@ -94,6 +95,9 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
      * fired from {@link SurveyDownloadService}.
      */
     private final BroadcastReceiver mSurveysSyncReceiver = new SurveySyncBroadcastReceiver(this);
+    private Toolbar toolbar;
+    private ExpandableListView expandableList;
+    private DrawerAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -131,6 +135,8 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
     }
 
     private void initializeToolBar() {
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         ActionBar supportActionBar = getSupportActionBar();
         if (supportActionBar != null) {
             supportActionBar.setDisplayHomeAsUpEnabled(true);
@@ -138,49 +144,65 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
     }
 
     private void initNavigationDrawer() {
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        FragmentManager supportFragmentManager = getSupportFragmentManager();
-        mDrawer = (DrawerFragment) supportFragmentManager.findFragmentByTag(DRAWER_FRAGMENT_TAG);
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-                 R.string.drawer_open, R.string.drawer_close) {
-
-            /** Called when a drawer has settled in a completely closed state. */
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                mDrawer.onDrawerClosed();
-                getSupportActionBar().setTitle(mTitle);
-                supportInvalidateOptionsMenu();
-            }
-
-            /**
-             * Called when a drawer has settled in a completely open state.
-             */
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                //prevent the back icon from showing
-                super.onDrawerSlide(drawerView, 0);
-                getSupportActionBar().setTitle(mDrawerTitle);
-                supportInvalidateOptionsMenu();
-            }
-
-            @Override
-            public void onDrawerSlide(View drawerView, float slideOffset) {
-                //disable drawer animation
-                super.onDrawerSlide(drawerView, 0);
-            }
-        };
-
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-
-        // Automatically select the survey
-        SurveyGroup sg = mDatabase.getSurveyGroup(FlowApp.getApp().getSurveyGroupId());
-        if (sg != null) {
-            onSurveySelected(sg);
-        } else {
-            mDrawerLayout.openDrawer(GravityCompat.START);
-        }
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.drawer_open,
+                R.string.drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+//        expandableList = (ExpandableListView) findViewById(R.id.navigation_menu);
+//
+//        if (mAdapter == null) {
+//            mAdapter = new DrawerAdapter(this);
+//            expandableList.setAdapter(mAdapter);
+//            expandableList.expandGroup(GROUP_SURVEYS);
+//            expandableList.setOnGroupClickListener(mAdapter);
+//            expandableList.setOnChildClickListener(mAdapter);
+//            registerForContextMenu(expandableList);
+//        }
+//        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+//        FragmentManager supportFragmentManager = getSupportFragmentManager();
+//        mDrawer = (DrawerFragment) supportFragmentManager.findFragmentByTag(DRAWER_FRAGMENT_TAG);
+//        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+//                 R.string.drawer_open, R.string.drawer_close) {
+//
+//            /** Called when a drawer has settled in a completely closed state. */
+//            @Override
+//            public void onDrawerClosed(View drawerView) {
+//                super.onDrawerClosed(drawerView);
+//                mDrawer.onDrawerClosed();
+//                getSupportActionBar().setTitle(mTitle);
+//                supportInvalidateOptionsMenu();
+//            }
+//
+//            /**
+//             * Called when a drawer has settled in a completely open state.
+//             */
+//            @Override
+//            public void onDrawerOpened(View drawerView) {
+//                super.onDrawerOpened(drawerView);
+//                //prevent the back icon from showing
+//                super.onDrawerSlide(drawerView, 0);
+//                getSupportActionBar().setTitle(mDrawerTitle);
+//                supportInvalidateOptionsMenu();
+//            }
+//
+//            @Override
+//            public void onDrawerSlide(View drawerView, float slideOffset) {
+//                //disable drawer animation
+//                super.onDrawerSlide(drawerView, 0);
+//            }
+//        };
+//
+//        mDrawerLayout.addDrawerListener(mDrawerToggle);
+//
+//        // Automatically select the survey
+//        SurveyGroup sg = mDatabase.getSurveyGroup(FlowApp.getApp().getSurveyGroupId());
+//        if (sg != null) {
+//            onSurveySelected(sg);
+//        } else {
+//            mDrawerLayout.openDrawer(GravityCompat.START);
+//        }
     }
 
     private void initDataPointsFragment(Bundle savedInstanceState) {
@@ -248,7 +270,7 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-        mDrawerToggle.syncState();
+       // mDrawerToggle.syncState();
     }
 
     @Override
@@ -321,16 +343,16 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        mDrawerToggle.onConfigurationChanged(newConfig);
+//        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        boolean showItems =
-                !mDrawerLayout.isDrawerOpen(GravityCompat.START) && mSurveyGroup != null;
-        for (int i = 0; i < menu.size(); i++) {
-            menu.getItem(i).setVisible(showItems);
-        }
+//        boolean showItems =
+//                !mDrawerLayout.isDrawerOpen(GravityCompat.START) && mSurveyGroup != null;
+//        for (int i = 0; i < menu.size(); i++) {
+//            menu.getItem(i).setVisible(showItems);
+//        }
         return super.onPrepareOptionsMenu(menu);
     }
 
@@ -430,6 +452,6 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
     }
 
     private void reloadDrawer() {
-        mDrawer.load();
+        //mDrawer.load();
     }
 }
