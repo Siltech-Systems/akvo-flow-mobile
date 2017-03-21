@@ -27,6 +27,7 @@ import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -35,7 +36,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import org.akvo.flow.BuildConfig;
@@ -66,6 +69,8 @@ import org.akvo.flow.util.StatusUtil;
 import org.akvo.flow.util.ViewUtil;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -150,6 +155,17 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
                 R.string.drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Spinner spinner = (Spinner) navigationView.getHeaderView(0).findViewById(R.id.user_spinner);
+        List<String> list = new ArrayList<>();
+        list.add("User 1");
+        list.add("User 2");
+        list.add("+ User");
+        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_item, list);
+        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinner.setAdapter(dataAdapter);
+
 //        expandableList = (ExpandableListView) findViewById(R.id.navigation_menu);
 //
 //        if (mAdapter == null) {

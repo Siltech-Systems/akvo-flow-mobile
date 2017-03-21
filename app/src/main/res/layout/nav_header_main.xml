@@ -20,11 +20,11 @@
             app:srcCompat="@drawable/ic_account_circle_black_48dp"
             android:id="@+id/imageView"/>
 
-    <TextView
+    <Spinner
+            android:id="@+id/user_spinner"
+            android:paddingTop="16dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="16dp"
-            android:text="User"
-            android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"></Spinner>
 
 </LinearLayout>
