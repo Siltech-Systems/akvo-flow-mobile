@@ -34,10 +34,14 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ExpandableListView;
 import android.widget.Spinner;
 import android.widget.Toast;
@@ -172,13 +176,23 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         Spinner spinner = (Spinner) navigationView.getHeaderView(0).findViewById(R.id.user_spinner);
         List<String> list = new ArrayList<>();
-        list.add("User 1");
+        list.add("Valeria");
         list.add("User 2");
         list.add("+ User");
-        ArrayAdapter<String> dataAdapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, list);
-        dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        UserAdapter dataAdapter = new UserAdapter(this, list);
         spinner.setAdapter(dataAdapter);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override public void onItemSelected(AdapterView<?> parent, View view, int position,
+                    long id) {
+                if (position == 2) {
+                    editUser(null);
+                }
+            }
+
+            @Override public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
 //        expandableList = (ExpandableListView) findViewById(R.id.navigation_menu);
 //
@@ -233,6 +247,44 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
         } else {
 //            mDrawerLayout.openDrawer(GravityCompat.START);
         }
+    }
+
+    private void editUser(final User user) {
+        final boolean newUser = user == null;
+        final EditText et = new EditText(this);
+        et.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        et.setSingleLine();
+        if (!newUser) {
+            et.append(user.getName());
+        }
+
+        int titleRes = user != null ? R.string.edit_user : R.string.add_user;
+
+        ViewUtil.ShowTextInputDialog(this, titleRes, R.string.username, et,
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String name = et.getText().toString();// TODO: Validate name
+                        if (TextUtils.isEmpty(name)) {
+                            // Disallow blank usernames
+                            Toast.makeText(SurveyActivity.this, R.string.empty_user_warning,
+                                    Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+
+                        Long uid = newUser ? null : user.getId();
+                        uid = mDatabase.createOrUpdateUser(uid, name);
+
+                        User loggedUser = FlowApp.getApp().getUser();
+                        if (newUser) {
+                            // Automatically log in new users
+                           onUserSelected(new User(uid, name));
+                        } else if (user.equals(loggedUser)) {
+                            loggedUser.setName(name);
+                        }
+                    }
+                });
     }
 
     private void initDataPointsFragment(Bundle savedInstanceState) {
@@ -484,5 +536,13 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
 
     private void reloadDrawer() {
         //mDrawer.load();
+    }
+
+    private static class UserAdapter extends ArrayAdapter<String> {
+
+        UserAdapter(Context context, List<String> objects) {
+            super(context, R.layout.user_spinner_item, R.id.user_spinner_item_text, objects);
+            setDropDownViewResource(R.layout.user_dropdown_spinner_item);
+        }
     }
 }
