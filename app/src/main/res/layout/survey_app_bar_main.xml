@@ -21,7 +21,7 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main"/>
+    <include layout="@layout/survey_content_main"/>
 
     <android.support.design.widget.FloatingActionButton
             android:id="@+id/add"
