@@ -40,28 +40,6 @@
                     android:text="Surveys"
                     />
 
-            <!--<ImageButton-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:background="@android:color/transparent"-->
-                    <!--app:srcCompat="@android:drawable/ic_menu_upload"-->
-                    <!--android:layout_marginLeft="8dp"-->
-                    <!--android:rotation="180"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:layout_toRightOf="@+id/surveys_section_title"-->
-                    <!--android:layout_toEndOf="@+id/surveys_section_title"-->
-                    <!--android:id="@+id/imageButton"/>-->
-
-            <!--<ImageButton-->
-                    <!--android:layout_width="wrap_content"-->
-                    <!--android:layout_height="wrap_content"-->
-                    <!--android:background="@android:color/transparent"-->
-                    <!--android:layout_centerVertical="true"-->
-                    <!--android:layout_marginLeft="8dp"-->
-                    <!--app:srcCompat="@android:drawable/ic_menu_add"-->
-                    <!--android:layout_toRightOf="@+id/imageButton"-->
-                    <!--android:layout_toEndOf="@+id/imageButton"-->
-                    <!--android:id="@+id/imageButton2"/>-->
         </RelativeLayout>
 
         <TextView
@@ -98,7 +76,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
-                android:drawableLeft="@android:drawable/ic_menu_set_as"
                 android:drawablePadding="8dp"
                 android:gravity="center"
                 android:id="@+id/textView"/>
@@ -111,7 +88,6 @@
                 android:layout_marginStart="24dp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@android:drawable/ic_menu_set_as"
                 android:drawablePadding="8dp"
                 android:gravity="center"
                 android:id="@+id/textView2"/>
@@ -131,7 +107,6 @@
                 android:textColor="@color/black_main"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableLeft="@android:drawable/ic_menu_preferences"
                 android:drawablePadding="8dp"
                 android:gravity="center"
                 android:id="@+id/textView3"/>
