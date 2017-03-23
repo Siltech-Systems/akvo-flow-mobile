@@ -6,42 +6,28 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:fitsSystemWindows="true"
         android:background="@android:color/white"
         app:itemTextColor="@color/black_main"
         app:headerLayout="@layout/survey_navigation_header_main">
 
     <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:layout_marginTop="176dp">
+            android:paddingTop="176dp">
 
-        <RelativeLayout
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                >
-
-            <TextView
-                    android:id="@+id/surveys_section_title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="24dp"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginStart="16dp"
-                    android:textSize="18sp"
-                    android:layout_centerVertical="true"
-                    android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"
-                    android:maxLines="1"
-                    android:textStyle="italic"
-                    android:textColor="@color/black_disabled"
-                    android:text="Surveys"
-                    />
-
-        </RelativeLayout>
-
+        <TextView
+                android:id="@+id/surveys_section_title"
+                android:layout_width="wrap_content"
+                android:layout_height="24dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:textSize="18sp"
+                android:maxLines="1"
+                android:textStyle="italic"
+                android:textColor="@color/black_disabled"
+                android:text="Surveys"
+                />
         <TextView
                 android:text="Reload all forms"
                 android:textColor="@color/black_main"
@@ -54,6 +40,7 @@
                 android:drawablePadding="8dp"
                 android:gravity="center"
                 android:id="@+id/text_view_form_reload"/>
+
         <TextView
                 android:text="Download form"
                 android:textColor="@color/black_main"
