@@ -40,10 +40,9 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="AppTheme" parent="Theme.AppCompat.Light">
-        <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/orange_main</item>
         <item name="colorPrimaryDark">@color/orange_disabled</item>
-        <item name="colorAccent">@color/blue_main</item>
+        <item name="colorAccent">@color/green</item>
         <item name="android:windowBackground">@color/background_main</item>
     </style>
 

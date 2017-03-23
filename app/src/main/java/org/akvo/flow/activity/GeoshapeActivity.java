@@ -483,7 +483,7 @@ public class GeoshapeActivity extends AppCompatActivity
             mAccuracy.setText(
                 getString(R.string.accuracy) + ": " + new DecimalFormat("#").format(location.getAccuracy()) + "m");
             if (location.getAccuracy() <= ACCURACY_THRESHOLD) {
-                mAccuracy.setTextColor(ContextCompat.getColor(this, R.color.button_green));
+                mAccuracy.setTextColor(ContextCompat.getColor(this, R.color.green));
             } else {
                 mAccuracy.setTextColor(Color.RED);
             }

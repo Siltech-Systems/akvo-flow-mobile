@@ -213,12 +213,12 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
 //        mDrawerLayout.addDrawerListener(mDrawerToggle);
 //
 //        // Automatically select the survey
-//        SurveyGroup sg = mDatabase.getSurveyGroup(FlowApp.getApp().getSurveyGroupId());
-//        if (sg != null) {
-//            onSurveySelected(sg);
-//        } else {
+        SurveyGroup sg = mDatabase.getSurveyGroup(FlowApp.getApp().getSurveyGroupId());
+        if (sg != null) {
+            onSurveySelected(sg);
+        } else {
 //            mDrawerLayout.openDrawer(GravityCompat.START);
-//        }
+        }
     }
 
     private void initDataPointsFragment(Bundle savedInstanceState) {
