@@ -36,6 +36,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ExpandableListView;
 import android.widget.Spinner;
@@ -137,6 +138,19 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
             displaySelectedUser();
         }
 
+        setupFabButton();
+
+    }
+
+    private void setupFabButton() {
+        findViewById(R.id.add).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //TODO: disable FAB to avoid clicking multiple times
+                String newLocaleId = mDatabase.createSurveyedLocale(mSurveyGroup.getId());
+                onRecordSelected(newLocaleId);
+            }
+        });
     }
 
     private void initializeToolBar() {
@@ -351,8 +365,8 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
         } else {
             supportInvalidateOptionsMenu();
         }
-        mDrawer.load();
-        mDrawerLayout.closeDrawers();
+//        mDrawer.load();
+  //      mDrawerLayout.closeDrawers();
 
     }
 
@@ -374,7 +388,8 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
+//        return mDrawerToggle.onOptionsItemSelected(item) ||
+                return super.onOptionsItemSelected(item);
     }
 
     @Override
