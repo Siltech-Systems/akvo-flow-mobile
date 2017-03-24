@@ -64,6 +64,7 @@ import org.akvo.flow.service.SurveyDownloadService;
 import org.akvo.flow.service.SurveyedDataPointSyncService;
 import org.akvo.flow.service.TimeCheckService;
 import org.akvo.flow.ui.Navigator;
+import org.akvo.flow.ui.fragment.AddUserDialogFragment;
 import org.akvo.flow.ui.fragment.DatapointsFragment;
 import org.akvo.flow.ui.fragment.DrawerAdapter;
 import org.akvo.flow.ui.fragment.DrawerFragment;
@@ -182,10 +183,12 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
         UserAdapter dataAdapter = new UserAdapter(this, list);
         spinner.setAdapter(dataAdapter);
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override public void onItemSelected(AdapterView<?> parent, View view, int position,
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position,
                     long id) {
                 if (position == 2) {
-                    editUser(null);
+                    AddUserDialogFragment dialogFragment = new AddUserDialogFragment();
+                    dialogFragment.show(getSupportFragmentManager(), null); //TODO: use real tag
                 }
             }
 
@@ -194,58 +197,58 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
             }
         });
 
-//        expandableList = (ExpandableListView) findViewById(R.id.navigation_menu);
-//
-//        if (mAdapter == null) {
-//            mAdapter = new DrawerAdapter(this);
-//            expandableList.setAdapter(mAdapter);
-//            expandableList.expandGroup(GROUP_SURVEYS);
-//            expandableList.setOnGroupClickListener(mAdapter);
-//            expandableList.setOnChildClickListener(mAdapter);
-//            registerForContextMenu(expandableList);
-//        }
-//        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-//        FragmentManager supportFragmentManager = getSupportFragmentManager();
-//        mDrawer = (DrawerFragment) supportFragmentManager.findFragmentByTag(DRAWER_FRAGMENT_TAG);
-//        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
-//                 R.string.drawer_open, R.string.drawer_close) {
-//
-//            /** Called when a drawer has settled in a completely closed state. */
-//            @Override
-//            public void onDrawerClosed(View drawerView) {
-//                super.onDrawerClosed(drawerView);
-//                mDrawer.onDrawerClosed();
-//                getSupportActionBar().setTitle(mTitle);
-//                supportInvalidateOptionsMenu();
-//            }
-//
-//            /**
-//             * Called when a drawer has settled in a completely open state.
-//             */
-//            @Override
-//            public void onDrawerOpened(View drawerView) {
-//                super.onDrawerOpened(drawerView);
-//                //prevent the back icon from showing
-//                super.onDrawerSlide(drawerView, 0);
-//                getSupportActionBar().setTitle(mDrawerTitle);
-//                supportInvalidateOptionsMenu();
-//            }
-//
-//            @Override
-//            public void onDrawerSlide(View drawerView, float slideOffset) {
-//                //disable drawer animation
-//                super.onDrawerSlide(drawerView, 0);
-//            }
-//        };
-//
-//        mDrawerLayout.addDrawerListener(mDrawerToggle);
-//
-//        // Automatically select the survey
+        //        expandableList = (ExpandableListView) findViewById(R.id.navigation_menu);
+        //
+        //        if (mAdapter == null) {
+        //            mAdapter = new DrawerAdapter(this);
+        //            expandableList.setAdapter(mAdapter);
+        //            expandableList.expandGroup(GROUP_SURVEYS);
+        //            expandableList.setOnGroupClickListener(mAdapter);
+        //            expandableList.setOnChildClickListener(mAdapter);
+        //            registerForContextMenu(expandableList);
+        //        }
+        //        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        //        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        //        mDrawer = (DrawerFragment) supportFragmentManager.findFragmentByTag(DRAWER_FRAGMENT_TAG);
+        //        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout,
+        //                 R.string.drawer_open, R.string.drawer_close) {
+        //
+        //            /** Called when a drawer has settled in a completely closed state. */
+        //            @Override
+        //            public void onDrawerClosed(View drawerView) {
+        //                super.onDrawerClosed(drawerView);
+        //                mDrawer.onDrawerClosed();
+        //                getSupportActionBar().setTitle(mTitle);
+        //                supportInvalidateOptionsMenu();
+        //            }
+        //
+        //            /**
+        //             * Called when a drawer has settled in a completely open state.
+        //             */
+        //            @Override
+        //            public void onDrawerOpened(View drawerView) {
+        //                super.onDrawerOpened(drawerView);
+        //                //prevent the back icon from showing
+        //                super.onDrawerSlide(drawerView, 0);
+        //                getSupportActionBar().setTitle(mDrawerTitle);
+        //                supportInvalidateOptionsMenu();
+        //            }
+        //
+        //            @Override
+        //            public void onDrawerSlide(View drawerView, float slideOffset) {
+        //                //disable drawer animation
+        //                super.onDrawerSlide(drawerView, 0);
+        //            }
+        //        };
+        //
+        //        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        //
+        //        // Automatically select the survey
         SurveyGroup sg = mDatabase.getSurveyGroup(FlowApp.getApp().getSurveyGroupId());
         if (sg != null) {
             onSurveySelected(sg);
         } else {
-//            mDrawerLayout.openDrawer(GravityCompat.START);
+            //            mDrawerLayout.openDrawer(GravityCompat.START);
         }
     }
 
@@ -279,7 +282,7 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
                         User loggedUser = FlowApp.getApp().getUser();
                         if (newUser) {
                             // Automatically log in new users
-                           onUserSelected(new User(uid, name));
+                            onUserSelected(new User(uid, name));
                         } else if (user.equals(loggedUser)) {
                             loggedUser.setName(name);
                         }
@@ -352,7 +355,7 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
         // Sync the toggle state after onRestoreInstanceState has occurred.
-       // mDrawerToggle.syncState();
+        // mDrawerToggle.syncState();
     }
 
     @Override
@@ -417,31 +420,31 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
         } else {
             supportInvalidateOptionsMenu();
         }
-//        mDrawer.load();
-  //      mDrawerLayout.closeDrawers();
+        //        mDrawer.load();
+        //      mDrawerLayout.closeDrawers();
 
     }
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-//        mDrawerToggle.onConfigurationChanged(newConfig);
+        //        mDrawerToggle.onConfigurationChanged(newConfig);
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-//        boolean showItems =
-//                !mDrawerLayout.isDrawerOpen(GravityCompat.START) && mSurveyGroup != null;
-//        for (int i = 0; i < menu.size(); i++) {
-//            menu.getItem(i).setVisible(showItems);
-//        }
+        //        boolean showItems =
+        //                !mDrawerLayout.isDrawerOpen(GravityCompat.START) && mSurveyGroup != null;
+        //        for (int i = 0; i < menu.size(); i++) {
+        //            menu.getItem(i).setVisible(showItems);
+        //        }
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-//        return mDrawerToggle.onOptionsItemSelected(item) ||
-                return super.onOptionsItemSelected(item);
+        //        return mDrawerToggle.onOptionsItemSelected(item) ||
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -480,15 +483,14 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
             }
             c.close();
 
-            navigator.navigateToFormActivity(this, surveyedLocaleId, user, formId, formInstanceId, readOnly,
+            navigator.navigateToFormActivity(this, surveyedLocaleId, user, formId, formInstanceId,
+                    readOnly,
                     mSurveyGroup);
         } else {
             navigator.navigateToRecordActivity(this, surveyedLocaleId, mSurveyGroup);
 
         }
     }
-
-
 
     private void displaySelectedUser() {
         User user = FlowApp.getApp().getUser();

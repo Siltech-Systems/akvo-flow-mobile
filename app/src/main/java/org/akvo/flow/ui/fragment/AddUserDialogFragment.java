@@ -27,6 +27,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 
 import org.akvo.flow.R;
@@ -35,6 +36,10 @@ public class AddUserDialogFragment extends DialogFragment {
 
     @NonNull @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final EditText et = new EditText(getActivity());
+        et.setLayoutParams(new ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        et.setSingleLine();
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LinearLayout main = new LinearLayout(getActivity());
         main.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
@@ -42,10 +47,15 @@ public class AddUserDialogFragment extends DialogFragment {
         main.setOrientation(LinearLayout.VERTICAL);
         int titleRes = R.string.add_user;
         builder.setTitle(titleRes);
-        builder.setMessage(text);
-        main.addView(inputView);
+        builder.setMessage(R.string.username);
+        main.addView(et);
         builder.setView(main);
-        builder.setPositiveButton(R.string.okbutton, clickListener);
+        builder.setPositiveButton(R.string.okbutton, new DialogInterface.OnClickListener() {
+            @Override public void onClick(DialogInterface dialog, int which) {
+                //TODO
+
+            }
+        });
 
         builder.setNegativeButton(R.string.cancelbutton,
                 new DialogInterface.OnClickListener() {
