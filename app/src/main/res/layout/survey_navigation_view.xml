@@ -2,6 +2,7 @@
 <android.support.design.widget.NavigationView
         xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:id="@+id/nav_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
@@ -11,9 +12,12 @@
         app:headerLayout="@layout/survey_navigation_header_main">
 
     <LinearLayout
+            android:id="@+id/surveys_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
+            android:visibility="visible"
+            tools:visibility="gone"
             android:paddingTop="176dp">
 
         <TextView
@@ -98,5 +102,39 @@
                 android:gravity="center"
                 android:id="@+id/textView3"/>
 
+    </LinearLayout>
+    <LinearLayout
+            android:id="@+id/user_list"
+            android:orientation="vertical"
+            android:visibility="gone"
+            tools:visibility="visible"
+            android:paddingTop="176dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <TextView
+                android:text="User 2"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:textColor="@color/black_main"
+                android:id="@+id/textView4"/>
+        <TextView
+                android:text="User 3"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:textColor="@color/black_main"
+                android:id="@+id/textView5"/>
+        <TextView
+                android:text="+ User"
+                android:layout_width="match_parent"
+                android:layout_height="24dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:textColor="@color/black_main"
+                android:id="@+id/textView6"/>
     </LinearLayout>
 </android.support.design.widget.NavigationView>

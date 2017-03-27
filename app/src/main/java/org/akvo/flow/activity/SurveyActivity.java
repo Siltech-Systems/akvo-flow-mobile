@@ -39,11 +39,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ExpandableListView;
-import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.akvo.flow.BuildConfig;
@@ -64,7 +63,6 @@ import org.akvo.flow.service.SurveyDownloadService;
 import org.akvo.flow.service.SurveyedDataPointSyncService;
 import org.akvo.flow.service.TimeCheckService;
 import org.akvo.flow.ui.Navigator;
-import org.akvo.flow.ui.fragment.AddUserDialogFragment;
 import org.akvo.flow.ui.fragment.DatapointsFragment;
 import org.akvo.flow.ui.fragment.DrawerAdapter;
 import org.akvo.flow.ui.fragment.DrawerFragment;
@@ -75,7 +73,6 @@ import org.akvo.flow.util.StatusUtil;
 import org.akvo.flow.util.ViewUtil;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
 import java.util.List;
 
 import timber.log.Timber;
@@ -174,31 +171,43 @@ public class SurveyActivity extends AppCompatActivity implements RecordListListe
                 R.string.drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        Spinner spinner = (Spinner) navigationView.getHeaderView(0).findViewById(R.id.user_spinner);
-        List<String> list = new ArrayList<>();
-        list.add("Valeria");
-        list.add("User 2");
-        list.add("+ User");
-        UserAdapter dataAdapter = new UserAdapter(this, list);
-        spinner.setAdapter(dataAdapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        final NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        final TextView user = (TextView) navigationView.getHeaderView(0)
+                .findViewById(R.id.selected_user);
+
+        user.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position,
-                    long id) {
-                if (position == 2) {
-                    AddUserDialogFragment dialogFragment = new AddUserDialogFragment();
-                    dialogFragment.show(getSupportFragmentManager(), null); //TODO: use real tag
-                }
-            }
-
-            @Override public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View v) {
+                user.setCompoundDrawablesWithIntrinsicBounds(0, 0,
+                        android.R.drawable.arrow_up_float, 0);
+                navigationView.findViewById(R.id.surveys_list).setVisibility(View.GONE);
+                navigationView.findViewById(R.id.user_list).setVisibility(View.VISIBLE);
             }
         });
-
-        //        expandableList = (ExpandableListView) findViewById(R.id.navigation_menu);
+        //        AddUserDialogFragment dialogFragment = new AddUserDialogFragment();
+        //        dialogFragment.show(getSupportFragmentManager(), null); //TODO: use real tag
+        //        List<String> list = new ArrayList<>();
+        //        list.add("Valeria");
+        //        list.add("User 2");
+        //        list.add("+ User");
+        //        UserAdapter dataAdapter = new UserAdapter(this, list);
+        //        spinner.setAdapter(dataAdapter);
+        //        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        //            @Override
+        //            public void onItemSelected(AdapterView<?> parent, View view, int position,
+        //                    long id) {
+        //                if (position == 2) {
         //
+        //                }
+        //            }
+        //
+        //            @Override public void onNothingSelected(AdapterView<?> parent) {
+        //
+        //            }
+        //        });
+        //
+        //        //        expandableList = (ExpandableListView) findViewById(R.id.navigation_menu);
+        //        //
         //        if (mAdapter == null) {
         //            mAdapter = new DrawerAdapter(this);
         //            expandableList.setAdapter(mAdapter);
