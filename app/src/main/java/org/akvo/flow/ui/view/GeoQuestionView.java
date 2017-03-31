@@ -20,7 +20,6 @@
 package org.akvo.flow.ui.view;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -28,14 +27,18 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.animation.AlphaAnimation;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.TextView;
+
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.akvo.flow.R;
 import org.akvo.flow.domain.Question;
@@ -43,7 +46,6 @@ import org.akvo.flow.domain.QuestionResponse;
 import org.akvo.flow.event.SurveyListener;
 import org.akvo.flow.event.TimedLocationListener;
 import org.akvo.flow.ui.fragment.GpsDisabledDialogFragment;
-import org.akvo.flow.util.ConstantUtil;
 
 import java.text.DecimalFormat;
 
@@ -66,13 +68,14 @@ public class GeoQuestionView extends QuestionView implements OnClickListener, On
     private final DecimalFormat accuracyFormat = new DecimalFormat("#");
     private final DecimalFormat altitudeFormat = new DecimalFormat("#.#");
 
-    private EditText mLatField;
-    private EditText mLonField;
-    private EditText mElevationField;
-    private TextView mStatusIndicator;
+//    private EditText mLatField;
+//    private EditText mLonField;
+//    private EditText mElevationField;
+//    private TextView mStatusIndicator;
     private Button mGeoButton;
-    private View geoLoading;
-    private View geoManualInputContainer;
+//    private View geoLoading;
+//    private View geoManualInputContainer;
+    private MapView mapView;
 
     private String mCode = "";
     private float mLastAccuracy;
@@ -86,31 +89,56 @@ public class GeoQuestionView extends QuestionView implements OnClickListener, On
     private void init() {
         setQuestionView(R.layout.geo_question_view);
 
-        mLatField = (EditText) findViewById(R.id.lat_et);
-        mLonField = (EditText) findViewById(R.id.lon_et);
-        mElevationField = (EditText) findViewById(R.id.height_et);
+//        mLatField = (EditText) findViewById(R.id.lat_et);
+//        mLonField = (EditText) findViewById(R.id.lon_et);
+//        mElevationField = (EditText) findViewById(R.id.height_et);
         mGeoButton = (Button) findViewById(R.id.geo_btn);
-        mStatusIndicator = (TextView) findViewById(R.id.acc_tv);
-        geoLoading = findViewById(R.id.auto_geo_location_progress);
-        geoManualInputContainer = findViewById(R.id.manual_geo_input_container);
+//        mStatusIndicator = (TextView) findViewById(R.id.acc_tv);
+//        geoLoading = findViewById(R.id.auto_geo_location_progress);
+//        geoManualInputContainer = findViewById(R.id.manual_geo_input_container);
+//
+//        mStatusIndicator.setText(R.string.geo_location_accuracy_default);
 
-        mStatusIndicator.setText(R.string.geo_location_accuracy_default);
+        mapView = (MapView)findViewById(R.id.mapView);
+        mapView.onCreate(null);
+        mapView.onResume();
+        mapView.getMapAsync(new OnMapReadyCallback() {
+            @Override
+            public void onMapReady(final GoogleMap googleMap) {
+                googleMap.getUiSettings().setMapToolbarEnabled(false);
+                googleMap.getUiSettings().setZoomGesturesEnabled(true);
+                LatLng position = new LatLng(41.428045, 2.178232);
+                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 13f));
+                googleMap.addMarker(new MarkerOptions()
+                        .position(position)
+                        .title("41.428045, 2.178232"));
+                googleMap.setOnMapClickListener(new GoogleMap.OnMapClickListener() {
+                    @Override
+                    public void onMapClick(LatLng latLng) {
+                        googleMap.clear();
+                        googleMap.addMarker(new MarkerOptions()
+                                .position(latLng)
+                                .title(latLng.latitude+", "+latLng.longitude));
+                    }
+                });
+            }
+        });
 
-        mLatField.setOnFocusChangeListener(this);
-        mLonField.setOnFocusChangeListener(this);
-        mElevationField.setOnFocusChangeListener(this);
+//        mLatField.setOnFocusChangeListener(this);
+//        mLonField.setOnFocusChangeListener(this);
+//        mElevationField.setOnFocusChangeListener(this);
         mGeoButton.setOnClickListener(this);
 
         if (isReadOnly()) {
-            mLatField.setFocusable(false);
-            mLonField.setFocusable(false);
-            mElevationField.setFocusable(false);
+//            mLatField.setFocusable(false);
+//            mLonField.setFocusable(false);
+//            mElevationField.setFocusable(false);
             mGeoButton.setEnabled(false);
         }
         if (mQuestion.isLocked()) {
-            mLatField.setFocusable(false);
-            mLonField.setFocusable(false);
-            mElevationField.setFocusable(false);
+//            mLatField.setFocusable(false);
+//            mLonField.setFocusable(false);
+//            mElevationField.setFocusable(false);
         }
     }
 
@@ -118,14 +146,14 @@ public class GeoQuestionView extends QuestionView implements OnClickListener, On
         //TODO: refactor using states
         if (mGeoButton.getText().toString()
                 .equals(getResources().getString(R.string.cancelbutton))) {
-            geoLoading.setVisibility(GONE);
+//            geoLoading.setVisibility(GONE);
             //TODO: improve
-            setViewAlpha(0.1f, 1f, geoManualInputContainer);
+//            setViewAlpha(0.1f, 1f, geoManualInputContainer);
             stopLocation();
             updateButtonTextToGetGeo();
         } else {
-            geoLoading.setVisibility(VISIBLE);
-            setViewAlpha(1f, 0.1f, geoManualInputContainer);
+//            geoLoading.setVisibility(VISIBLE);
+//            setViewAlpha(1f, 0.1f, geoManualInputContainer);
             resetViewsToDefaultValues();
             setStatusToRed();
             resetResponseValues();
@@ -176,18 +204,18 @@ public class GeoQuestionView extends QuestionView implements OnClickListener, On
     }
 
     private void resetViewsToDefaultValues() {
-        mStatusIndicator.setText(R.string.geo_location_accuracy_default);
-        mLatField.setText("");
-        mLonField.setText("");
-        mElevationField.setText("");
+//        mStatusIndicator.setText(R.string.geo_location_accuracy_default);
+//        mLatField.setText("");
+//        mLonField.setText("");
+//        mElevationField.setText("");
     }
 
     private void setStatusToRed() {
-        mStatusIndicator.setTextColor(Color.RED);
+//        mStatusIndicator.setTextColor(Color.RED);
     }
 
     private void setStatusToGreen() {
-        mStatusIndicator.setTextColor(Color.GREEN);
+//        mStatusIndicator.setTextColor(Color.GREEN);
     }
 
     /**
@@ -223,9 +251,9 @@ public class GeoQuestionView extends QuestionView implements OnClickListener, On
         if (resp != null && resp.getValue() != null) {
             String[] tokens = resp.getValue().split("\\|", -1);
             if (tokens.length > 2) {
-                mLatField.setText(tokens[0]);
-                mLonField.setText(tokens[1]);
-                mElevationField.setText(tokens[2]);
+//                mLatField.setText(tokens[0]);
+//                mLonField.setText(tokens[1]);
+//                mElevationField.setText(tokens[2]);
                 if (tokens.length > 3) {
                     mCode = tokens[3];
                 }
@@ -257,11 +285,11 @@ public class GeoQuestionView extends QuestionView implements OnClickListener, On
     }
 
     private void updateViews(double latitude, double longitude, double altitude, float accuracy) {
-        mStatusIndicator.setText(getContext()
-                .getString(R.string.geo_location_accuracy, accuracyFormat.format(accuracy)));
-        mLatField.setText(latitude + "");
-        mLonField.setText(longitude + "");
-        mElevationField.setText(altitudeFormat.format(altitude));
+//        mStatusIndicator.setText(getContext()
+//                .getString(R.string.geo_location_accuracy, accuracyFormat.format(accuracy)));
+//        mLatField.setText(latitude + "");
+//        mLonField.setText(longitude + "");
+//        mElevationField.setText(altitudeFormat.format(altitude));
     }
 
     @Override
@@ -296,30 +324,32 @@ public class GeoQuestionView extends QuestionView implements OnClickListener, On
     @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus) {
-            final String lat = mLatField.getText().toString();
-            final String lon = mLonField.getText().toString();
-            if (!TextUtils.isEmpty(lat) && !TextUtils.isEmpty(lon)) {
-                updateCode(Double.parseDouble(lat), Double.parseDouble(lon));
-            }
-            setResponse();
+//            final String lat = mLatField.getText().toString();
+//            final String lon = mLonField.getText().toString();
+//            if (!TextUtils.isEmpty(lat) && !TextUtils.isEmpty(lon)) {
+//                updateCode(Double.parseDouble(lat), Double.parseDouble(lon));
+//            }
+//            setResponse();
         }
     }
 
     private void setResponse() {
-        final String lat = mLatField.getText().toString();
-        final String lon = mLonField.getText().toString();
-
-        if (TextUtils.isEmpty(lat) || TextUtils.isEmpty(lon)) {
-            setResponse(null);
-        } else {
-            setResponse(new QuestionResponse(getResponse(lat, lon), ConstantUtil.GEO_RESPONSE_TYPE,
-                    getQuestion().getId()));
-        }
+//        final String lat = mLatField.getText().toString();
+//        final String lon = mLonField.getText().toString();
+//
+//        if (TextUtils.isEmpty(lat) || TextUtils.isEmpty(lon)) {
+//            setResponse(null);
+//        } else {
+//            setResponse(new QuestionResponse(getResponse(lat, lon), ConstantUtil.GEO_RESPONSE_TYPE,
+//                    getQuestion().getId()));
+//        }
     }
 
     @NonNull
     private String getResponse(String lat, String lon) {
-        return lat + RESPONSE_DELIMITER + lon + RESPONSE_DELIMITER + mElevationField.getText()
+        String elevation = "";
+//        String elevation = mElevationField.getText();
+        return lat + RESPONSE_DELIMITER + lon + RESPONSE_DELIMITER + elevation
                 + RESPONSE_DELIMITER + mCode;
     }
 
