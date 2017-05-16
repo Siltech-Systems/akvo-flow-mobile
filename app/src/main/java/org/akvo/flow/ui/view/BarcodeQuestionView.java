@@ -1,17 +1,20 @@
 /*
  *  Copyright (C) 2010-2016 Stichting Akvo (Akvo Foundation)
  *
- *  This file is part of Akvo FLOW.
+ *  This file is part of Akvo Flow.
  *
- *  Akvo FLOW is free software: you can redistribute it and modify it under the terms of
- *  the GNU Affero General Public License (AGPL) as published by the Free Software Foundation,
- *  either version 3 of the License or any later version.
+ *  Akvo Flow is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- *  Akvo FLOW is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *  See the GNU Affero General Public License included below for more details.
+ *  Akvo Flow is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *  The full license text can also be seen at <http://www.gnu.org/licenses/agpl.html>.
+ *  You should have received a copy of the GNU General Public License
+ *  along with Akvo Flow.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.akvo.flow.ui.view;
@@ -31,7 +34,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-
 import org.akvo.flow.R;
 import org.akvo.flow.domain.Question;
 import org.akvo.flow.domain.QuestionResponse;
@@ -43,14 +45,12 @@ import org.akvo.flow.util.ViewUtil;
 /**
  * Question to handle scanning of a barcode. This question relies on the zxing
  * library being installed on the device.
- * 
+ *
  * @author Christopher Fagiani
  */
-public class BarcodeQuestionView extends QuestionView implements OnClickListener,
-        OnFocusChangeListener {
+public class BarcodeQuestionView extends QuestionView implements OnClickListener, OnFocusChangeListener {
+
     private EditText mInputText;
-    private ImageButton mAddBtn;
-    private Button mScanBtn;
     private LinearLayout mInputContainer;
     private boolean mMultiple;
 
@@ -64,72 +64,89 @@ public class BarcodeQuestionView extends QuestionView implements OnClickListener
 
         mMultiple = getQuestion().isAllowMultiple();
 
-        mInputContainer = (LinearLayout)findViewById(R.id.input_ll);
-        mScanBtn = (Button)findViewById(R.id.scan_btn);
-        mAddBtn = (ImageButton)findViewById(R.id.add_btn);
-        mInputText = (EditText)findViewById(R.id.input_text);
+        mInputContainer = (LinearLayout) findViewById(R.id.input_ll);
 
+        mInputText = (EditText) findViewById(R.id.input_text);
+
+        Button mScanBtn = (Button) findViewById(R.id.scan_btn);
+        mScanBtn.setEnabled(!isReadOnly());
+
+        boolean isQuestionLocked = mQuestion.isLocked();
+
+        if (!isQuestionLocked) {
+            View manualInputContainer = findViewById(R.id.manual_input_container);
+            View manualInputSeparator = findViewById(R.id.manual_input_separator);
+            manualInputSeparator.setVisibility(VISIBLE);
+            manualInputContainer.setVisibility(VISIBLE);
+            setInputText();
+            setUpAddButton();
+        }
+
+        mScanBtn.setOnClickListener(this);
+    }
+
+    private void setUpAddButton() {
+        ImageButton mAddBtn = (ImageButton) findViewById(R.id.add_btn);
+        if (isReadOnly() || !mMultiple) {
+            mAddBtn.setVisibility(View.GONE);
+        }
+        mAddBtn.setOnClickListener(this);
+    }
+
+    private void setInputText() {
+        boolean isReadOnly = isReadOnly();
         if (mMultiple) {
             mInputText.addTextChangedListener(new TextWatcher() {
                 @Override
                 public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+                    // EMPTY
                 }
 
                 @Override
                 public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    // EMPTY
                 }
 
                 @Override
                 public void afterTextChanged(Editable s) {
-                    String[] tokens =  s.toString().split("\\s+", -1);
+                    String[] tokens = s.toString().split("\\s+", -1);
                     if (tokens.length > 1) {
-                        for (int i=0; i<tokens.length-1; i++) {
+                        for (int i = 0; i < tokens.length - 1; i++) {
                             addValue(tokens[i]);
                         }
-                        mInputText.setText(tokens[tokens.length-1]);
+                        mInputText.setText(tokens[tokens.length - 1]);
                     }
                 }
             });
-            if (isReadOnly()) {
+            if (isReadOnly) {
                 mInputText.setVisibility(View.GONE);
             }
         }
-
-        if (isReadOnly() && mMultiple) {
-            mInputText.setVisibility(View.GONE);
-        }
-        if (isReadOnly() || !mMultiple) {
-            mAddBtn.setVisibility(View.GONE);
-        }
-        mScanBtn.setEnabled(!isReadOnly());
-        mInputText.setFocusable(!isReadOnly());
         mInputText.setEnabled(!mQuestion.isLocked());
-
+        mInputText.setFocusable(!isReadOnly);
         mInputText.setOnFocusChangeListener(this);
-        mScanBtn.setOnClickListener(this);
-        mAddBtn.setOnClickListener(this);
     }
 
     private void addValue(final String text) {
         LayoutInflater inflater = LayoutInflater.from(getContext());
         final View view = inflater.inflate(R.layout.barcode_item, mInputContainer, false);
-        ((EditText)view.findViewById(R.id.input)).setText(text);
-        ImageButton btn = (ImageButton)view.findViewById(R.id.delete);
+        ((EditText) view.findViewById(R.id.input)).setText(text);
+        ImageButton btn = (ImageButton) view.findViewById(R.id.delete);
         if (isReadOnly()) {
             btn.setVisibility(View.GONE);
         } else {
             btn.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    ViewUtil.showConfirmDialog(R.string.deleteresponse, R.string.clear_value_msg,
-                            getContext(), true, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    mInputContainer.removeView(view);
-                                    displayOrder();
-                                    captureResponse();
-                                }
-                            });
+                    ViewUtil.showConfirmDialog(R.string.deleteresponse, R.string.clear_value_msg, getContext(), true,
+                                               new DialogInterface.OnClickListener() {
+                                                   @Override
+                                                   public void onClick(DialogInterface dialog, int which) {
+                                                       mInputContainer.removeView(view);
+                                                       displayOrder();
+                                                       captureResponse();
+                                                   }
+                                               });
                 }
             });
         }
@@ -143,10 +160,10 @@ public class BarcodeQuestionView extends QuestionView implements OnClickListener
         if (!mQuestion.isAllowMultiple()) {
             return;
         }
-        for (int i=0; i<mInputContainer.getChildCount(); i++) {
+        for (int i = 0; i < mInputContainer.getChildCount(); i++) {
             View view = mInputContainer.getChildAt(i);
             TextView orderView = (TextView) view.findViewById(R.id.order);
-            String text = i+1 + ":";
+            String text = i + 1 + ":";
             orderView.setText(text);
             orderView.setVisibility(VISIBLE);
         }
@@ -234,9 +251,9 @@ public class BarcodeQuestionView extends QuestionView implements OnClickListener
     public void captureResponse(boolean suppressListeners) {
         StringBuilder builder = new StringBuilder();
         if (mMultiple) {
-            for (int i=0; i<mInputContainer.getChildCount(); i++) {
+            for (int i = 0; i < mInputContainer.getChildCount(); i++) {
                 View v = mInputContainer.getChildAt(i);
-                String value = ((EditText)v.findViewById(R.id.input)).getText().toString();
+                String value = ((EditText) v.findViewById(R.id.input)).getText().toString();
                 if (!TextUtils.isEmpty(value)) {
                     builder.append(value);
                     if (i < mInputContainer.getChildCount() - 1) {
@@ -249,8 +266,7 @@ public class BarcodeQuestionView extends QuestionView implements OnClickListener
         if (!TextUtils.isEmpty(value)) {
             builder.append(value);
         }
-        setResponse(new QuestionResponse(builder.toString(), ConstantUtil.VALUE_RESPONSE_TYPE,
-                getQuestion().getId()), suppressListeners);
+        setResponse(new QuestionResponse(builder.toString(), ConstantUtil.VALUE_RESPONSE_TYPE, getQuestion().getId()),
+                    suppressListeners);
     }
-
 }

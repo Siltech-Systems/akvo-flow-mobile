@@ -1,73 +1,77 @@
 /*
- *  Copyright (C) 2010-2015 Stichting Akvo (Akvo Foundation)
+ *  Copyright (C) 2010-2017 Stichting Akvo (Akvo Foundation)
  *
- *  This file is part of Akvo FLOW.
+ *  This file is part of Akvo Flow.
  *
- *  Akvo FLOW is free software: you can redistribute it and modify it under the terms of
- *  the GNU Affero General Public License (AGPL) as published by the Free Software Foundation,
- *  either version 3 of the License or any later version.
+ *  Akvo Flow is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- *  Akvo FLOW is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *  See the GNU Affero General Public License included below for more details.
+ *  Akvo Flow is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *  The full license text can also be seen at <http://www.gnu.org/licenses/agpl.html>.
+ *  You should have received a copy of the GNU General Public License
+ *  along with Akvo Flow.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.akvo.flow.ui.adapter;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.List;
-
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import org.akvo.flow.R;
+import org.akvo.flow.data.database.TransmissionStatus;
 import org.akvo.flow.domain.FileTransmission;
-import org.akvo.flow.dao.SurveyDbAdapter.TransmissionStatus;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * Adapter that converts FileTransmission objects for display in a list view.
- * 
+ *
  * @author Christopher Fagiani
  */
 public class FileTransmissionArrayAdapter extends ArrayAdapter<FileTransmission> {
-    private DateFormat dateFormat;
-    private int layoutId;
+    private final DateFormat dateFormat;
+    private final int layoutId;
 
     public FileTransmissionArrayAdapter(Context context, int resourceId,
             List<FileTransmission> objects) {
         super(context, resourceId, objects);
         layoutId = resourceId;
-        dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
     }
 
     private void bindView(View view, FileTransmission trans) {
-        ImageView imageView = (ImageView) view.findViewById(R.id.statusicon);
-        TextView tv = (TextView)view.findViewById(R.id.statustext);
-
+        TextView tv = (TextView) view.findViewById(R.id.statustext);
         switch (trans.getStatus()) {
             case TransmissionStatus.QUEUED:
                 tv.setText(R.string.status_queued);
-                imageView.setImageResource(R.drawable.queued_icn);
+                tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_queued, 0, 0, 0);
                 break;
             case TransmissionStatus.IN_PROGRESS:
                 tv.setText(R.string.status_in_progress);
-                imageView.setImageResource(R.drawable.blueuparrow);
+                tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_progress, 0, 0, 0);
                 break;
             case TransmissionStatus.SYNCED:
                 tv.setText(R.string.status_synced);
-                imageView.setImageResource(R.drawable.checkmark);
+                tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_synced, 0, 0, 0);
                 break;
             case TransmissionStatus.FAILED:
                 tv.setText(R.string.status_failed);
-                imageView.setImageResource(R.drawable.red_cross);
+                tv.setCompoundDrawablesWithIntrinsicBounds(R.drawable.status_failed, 0, 0, 0);
+                break;
+            default:
                 break;
         }
 
@@ -86,13 +90,18 @@ public class FileTransmissionArrayAdapter extends ArrayAdapter<FileTransmission>
         ((TextView) view.findViewById(R.id.filename)).setText(trans.getFileName());
     }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
-        Context ctx = getContext();
-        LayoutInflater inflater = (LayoutInflater) ctx
-                .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(layoutId, null);
+    @NonNull
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+        View view;
+        if (convertView == null) {
+            Context ctx = getContext();
+            LayoutInflater inflater = (LayoutInflater) ctx
+                    .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            view = inflater.inflate(layoutId, null);
+        } else {
+            view = convertView;
+        }
         bindView(view, getItem(position));
         return view;
     }
-
 }

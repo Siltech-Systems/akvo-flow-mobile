@@ -1,25 +1,29 @@
 /*
- *  Copyright (C) 2016 Stichting Akvo (Akvo Foundation)
+ *  Copyright (C) 2016-2017 Stichting Akvo (Akvo Foundation)
  *
- *  This file is part of Akvo FLOW.
+ *  This file is part of Akvo Flow.
  *
- *  Akvo FLOW is free software: you can redistribute it and modify it under the terms of
- *  the GNU Affero General Public License (AGPL) as published by the Free Software Foundation,
- *  either version 3 of the License or any later version.
+ *  Akvo Flow is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- *  Akvo FLOW is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *  See the GNU Affero General Public License included below for more details.
+ *  Akvo Flow is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *  The full license text can also be seen at <http://www.gnu.org/licenses/agpl.html>.
+ *  You should have received a copy of the GNU General Public License
+ *  along with Akvo Flow.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.akvo.flow.ui.view;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -29,17 +33,26 @@ import org.akvo.flow.domain.Question;
 import org.akvo.flow.domain.QuestionResponse;
 import org.akvo.flow.event.QuestionInteractionEvent;
 import org.akvo.flow.event.SurveyListener;
+import org.akvo.flow.ui.adapter.CaddisflyResultsAdapter;
+import org.akvo.flow.ui.model.caddisfly.CaddisflyJsonMapper;
+import org.akvo.flow.ui.model.caddisfly.CaddisflyTestResult;
 import org.akvo.flow.util.ConstantUtil;
 import org.akvo.flow.util.FileUtil;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import timber.log.Timber;
 
 public class CaddisflyQuestionView extends QuestionView implements View.OnClickListener {
-    private static final String TAG = CaddisflyQuestionView.class.getSimpleName();
+
     private Button mButton;
-    private View mResponseView;
     private String mValue;
     private String mImage;
+    private final CaddisflyJsonMapper caddisflyJsonMapper = new CaddisflyJsonMapper();
+    private CaddisflyResultsAdapter caddisflyResultsAdapter;
+    private List<CaddisflyTestResult> caddisflyTestResults = new ArrayList<>();
 
     public CaddisflyQuestionView(Context context, Question q, SurveyListener surveyListener) {
         super(context, q, surveyListener);
@@ -48,14 +61,18 @@ public class CaddisflyQuestionView extends QuestionView implements View.OnClickL
 
     private void init() {
         setQuestionView(R.layout.caddisfly_question_view);
-        mResponseView = findViewById(R.id.response_view);
-        mButton = (Button)findViewById(R.id.button);
+        RecyclerView resultsRv = (RecyclerView) findViewById(R.id.results_recycler_view);
+        resultsRv.setLayoutManager(new LinearLayoutManager(resultsRv.getContext()));
+        caddisflyResultsAdapter = new CaddisflyResultsAdapter(
+                new ArrayList<CaddisflyTestResult>());
+        resultsRv.setAdapter(caddisflyResultsAdapter);
+        mButton = (Button) findViewById(R.id.button);
         mButton.setOnClickListener(this);
         displayResponseView();
     }
 
     private void displayResponseView() {
-        mResponseView.setVisibility(TextUtils.isEmpty(mValue) ? GONE : VISIBLE);
+        caddisflyResultsAdapter.setCaddisflyTestResults(caddisflyTestResults);
         mButton.setEnabled(!mSurveyListener.isReadOnly());
     }
 
@@ -71,6 +88,7 @@ public class CaddisflyQuestionView extends QuestionView implements View.OnClickL
     public void rehydrate(QuestionResponse resp) {
         super.rehydrate(resp);
         mValue = resp != null ? resp.getValue() : null;
+        caddisflyTestResults = caddisflyJsonMapper.transform(mValue);
         displayResponseView();
     }
 
@@ -78,6 +96,7 @@ public class CaddisflyQuestionView extends QuestionView implements View.OnClickL
     public void resetQuestion(boolean fireEvent) {
         super.resetQuestion(fireEvent);
         mValue = null;
+        caddisflyTestResults = caddisflyJsonMapper.transform(mValue);
         displayResponseView();
     }
 
@@ -85,11 +104,11 @@ public class CaddisflyQuestionView extends QuestionView implements View.OnClickL
     public void questionComplete(Bundle data) {
         if (data != null) {
             mValue = data.getString(ConstantUtil.CADDISFLY_RESPONSE);
-
+            caddisflyTestResults = caddisflyJsonMapper.transform(mValue);
             // Get optional image and store it as part of the response
             String image = data.getString(ConstantUtil.CADDISFLY_IMAGE);
 
-            Log.d(TAG, "caddisflyTestComplete - Response: " + mValue + ". Image: " + image);
+            Timber.d("caddisflyTestComplete - Response: %s . Image: %s", mValue, image);
 
             File src = !TextUtils.isEmpty(image) ? new File(image) : null;
             if (src != null && src.exists()) {
@@ -97,8 +116,8 @@ public class CaddisflyQuestionView extends QuestionView implements View.OnClickL
                 File dst = new File(FileUtil.getFilesDir(FileUtil.FileType.MEDIA), src.getName());
 
                 if (!src.renameTo(dst)) {
-                    Log.e(TAG, String.format("Could not move file %s to %s",
-                            src.getAbsoluteFile(), dst.getAbsoluteFile()));
+                    Timber.e("Could not move file %s to %s", src.getAbsoluteFile(),
+                            dst.getAbsoluteFile());
                 } else {
                     mImage = dst.getAbsolutePath();
                 }

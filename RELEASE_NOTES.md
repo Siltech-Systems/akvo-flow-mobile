@@ -1,5 +1,113 @@
 Akvo FLOW app release notes
 ===========================
+# ver 2.3.2
+Date: 27 April 2017
+
+# New and noteworthy
+* **Transmission History improved** - [#695](https://github.com/akvo/akvo-flow-mobile/issues/695) The transmission screen has been redesigned.
+* **App ToolBar color change** - [#668](https://github.com/akvo/akvo-flow-mobile/issues/668) The toolbar of the whole app has been redesigned respecting google material design and Akvo colors.
+
+# Resolved issues
+* **Data point distances are back** - [#710](https://github.com/akvo/akvo-flow-mobile/issues/710) Restored display of distances to the datapoint list.
+* **Selected survey background no longer grey** - [#704](https://github.com/akvo/akvo-flow-mobile/issues/704) Removed grey background when a survey is selected.
+
+---------------
+# ver 2.3.1.1
+Date: 13 April 2017
+
+# Resolved issues
+* **Crash when loading geoquestion: NumberFormatException: Invalid double** - [#697](https://github.com/akvo/akvo-flow-mobile/issues/697) Fixed crash due to unexpected double formatting in some geolocation questions.
+
+---------------
+# ver 2.3.1
+Date: 10 April 2017
+
+# New and noteworthy
+* **Improve UI for when searching for location** - [#673](https://github.com/akvo/akvo-flow-mobile/issues/673) Improved the look of geo question: it is now clearer when you can input the coordinates manually. 
+* **Add dependency injection with dagger 2** - [#534](https://github.com/akvo/akvo-flow-mobile/issues/534) First step to introduce dependency injection.
+* **Show Caddisfly result in more meaningful way** - [#470](https://github.com/akvo/akvo-flow-mobile/issues/470) Caddisfly test results are now displayed with the actual test values.
+
+# Resolved issues
+* **GeoQuestion Location Timeout** - [#675](https://github.com/akvo/akvo-flow-mobile/issues/675) If the location fails to be retrieved, you will now see a SnackBar which will allow you to retry.
+* **Remove "searching" textView** - [#674](https://github.com/akvo/akvo-flow-mobile/issues/674) The "searching" text was confusing and has been removed.
+* **Simplify dialogue for failed GPS search** - [#672](https://github.com/akvo/akvo-flow-mobile/issues/672) The dialog prompting for enabling the GPS setting now has a clearer message.
+* **Date Picker using GMT formatting by default** - [#662](https://github.com/akvo/akvo-flow-mobile/issues/662) Fixed the issue where a wrong day was displayed for some timezones.
+* **Crash when attempting to display the gps dialog** - [#656](https://github.com/akvo/akvo-flow-mobile/issues/656) Fixed the crash when the device was rotated while the GPS prompt dialog was displayed.
+
+---------------
+# ver 2.3.0
+Date: 16 March 2017
+
+# New and noteworthy
+* **Automate release note creation** - [#604](https://github.com/akvo/akvo-flow-mobile/issues/604) Release notes can now be generated faster with a script.
+* **Create 3 modules for the layers of the app** - [#535](https://github.com/akvo/akvo-flow-mobile/issues/535) This is the first step of refactoring the app to 3 layers app/domain/data.
+
+# Resolved issues
+* **Review some exceptions being sent to sentry** - [#633](https://github.com/akvo/akvo-flow-mobile/issues/633) Filtered out exceptions that were not useful to reduce traffic.
+* **Data sync notifications phase 1** - [#584](https://github.com/akvo/akvo-flow-mobile/issues/584) Removed notifications when datapoints are being sent to the server.
+* **Languages: Find a better way to handle languages** - [#576](https://github.com/akvo/akvo-flow-mobile/issues/576) Improved language settings per survey and moved languages to the language table.
+* **Languages: When switching surveys the previous survey languages are displayed** - [#575](https://github.com/akvo/akvo-flow-mobile/issues/575) Fixed issue when survey languages were displayed for all the surveys at the same time.
+* **Database refactor phase 1** - [#544](https://github.com/akvo/akvo-flow-mobile/issues/544) User preferences have been moved out of database into SharedPreferences for faster access.
+
+---------------
+# ver 2.2.11
+Date: 23 February 2017
+
+# New and noteworthy
+* **Improve crash reporting** - [#551](https://github.com/akvo/akvo-flow-mobile/issues/551) and [#615](https://github.com/akvo/akvo-flow-mobile/issues/615) Crashes are now sent to sentry.io instead of google app engine. This will improve our crashes and error tracking to debug and fix issues faster.
+
+---------------
+# ver 2.2.10.1
+Date: 15 February 2017
+
+# Resolved issues
+* **Offline survey export: files folder missing** - [#614](https://github.com/akvo/akvo-flow-mobile/issues/614) Fixed the issue where for surveys with a slash in survey name, the collected data zip file was not generated.
+
+---------------
+# ver 2.2.10
+Date: 19 January 2017
+
+# New and noteworthy
+* **Update play services** - [#508] (https://github.com/akvo/akvo-flow-mobile/issues/508) Using Google Play Services version 7.5.0 with new features and bug fixes.
+* **Add basic lint configuration** - [#532] (https://github.com/akvo/akvo-flow-mobile/issues/532) Lint can now be run before building the app.
+* **Move Version code and name to properties file** - [#555] (https://github.com/akvo/akvo-flow-mobile/issues/555) It is now easier to increase version name and code.
+* **Remove location beacon sending** - [#550] (https://github.com/akvo/akvo-flow-mobile/issues/550) The location beacon sending feature, disabled by default, has now been completely removed.
+* **Design changes after update of support library** - [#559] (https://github.com/akvo/akvo-flow-mobile/issues/559) The Android Support Library has been updated to version 25.0.1 with multiple cosmetic improvements and fixes.
+* **Replace Akvo FLOW by Akvo Flow string** - [#564] (https://github.com/akvo/akvo-flow-mobile/issues/564) The app naming is now consistent everywhere in the app.
+* **Pull latest translations from Transifex** - [#589] (https://github.com/akvo/akvo-flow-mobile/issues/589) The translations have been updated.
+
+# Resolved issues
+* **Change the query type for the data point search** - [#467] (https://github.com/akvo/akvo-flow-mobile/issues/467) You can now easily search for a data point using any of the name fields, not just the first word.
+* **Error notification icon is shown as empty white circle** - [#486] (https://github.com/akvo/akvo-flow-mobile/issues/486) Notification look has been improved with new icon and colors.
+* **When notifications have long text, only one line is shown** - [#519] (https://github.com/akvo/akvo-flow-mobile/issues/519) Notifications can now be expanded on newer devices and the text has been made clearer and shorter.
+* **Error notification too long for unsuccessful syncing of data points** - [#560] (https://github.com/akvo/akvo-flow-mobile/issues/560) Notifications for data point syncing errors now have shorter text (similar to #519).
+* **Syncing imported data points** - [#526] (https://github.com/akvo/akvo-flow-mobile/issues/526) You will be notified if the data points were not synced correctly.
+* **When device is rotated user is shown the download update dialog again** - [#499] (https://github.com/akvo/akvo-flow-mobile/issues/499) You will no longer be constantly shown the update dialog when rotating the device.
+* **How to notify user of available updates**  - [#578] (https://github.com/akvo/akvo-flow-mobile/issues/578) Related to #499, the update frequency and user notification of new updates has been reduced.
+* **Form name does not wrap** - [#521] (https://github.com/akvo/akvo-flow-mobile/issues/521) Long form names are now displayed correctly.
+* **"About Akvo" is outdated** - [#545] (https://github.com/akvo/akvo-flow-mobile/issues/545) The "About Akvo" screen now shows up to date information.
+* **Long cascade options do not wrap** - [#568] (https://github.com/akvo/akvo-flow-mobile/issues/568) Long cascade names are now visible in full.
+
+---------------
+# ver 2.2.9
+Date: 24 November 2016
+
+# New and noteworthy
+* **Add possibility to update the app from the settings screen** - [#500] You can now go to the Settings screen and check for updates for the app and whenever you chose so.
+* **Improvements to login screen** [#469]  - We have made it easier to navigate between text input fields. Use the softkeyboard keys to go the the next field and to send the data when all done.
+* **Remove the text input field for barcode questions when manual input disabled** [#460] - We removed the confusing non editable text input when manual input is not allowed.
+* **Facilitate debugging using the same debug key** [#509]
+* **Allow debugging the app directly from Android Studio** [#491] - We have made it easier to debug directly using android studio and provided instructions in the wiki.
+* **Moved non translatable strings to a separate file** [#480]
+* **Added unit tests support** [#305] - You can now run unit tests, just follow instructions provided in the wiki.
+
+# Resolved issues
+* **When device is rotated do not show the user is logged in** [#498] - We no longer show the Toast message saying the user has been logged in every time the device is rotated.
+* **Surveys with the same name failed with manual transfer** [#476] - We have fixed the issue and you can have multiple forms with the same name and manually transfer them with all the questions displayed correctly.
+* **Added translations when there was an error synchronising a file** [#487] - We have provided translations for this error message.
+* **Do not check for notifications before deviceId is set** [#484] - This is the second part of [#454] and prevents the device from syncing if there is no deviceId set.
+
+---------------
 # ver 2.2.8
 Date: 8 November 2016
 

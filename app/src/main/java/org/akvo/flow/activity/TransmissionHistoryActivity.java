@@ -1,92 +1,103 @@
 /*
- *  Copyright (C) 2010-2012 Stichting Akvo (Akvo Foundation)
+ *  Copyright (C) 2010-2017 Stichting Akvo (Akvo Foundation)
  *
- *  This file is part of Akvo FLOW.
+ *  This file is part of Akvo Flow.
  *
- *  Akvo FLOW is free software: you can redistribute it and modify it under the terms of
- *  the GNU Affero General Public License (AGPL) as published by the Free Software Foundation,
- *  either version 3 of the License or any later version.
+ *  Akvo Flow is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
  *
- *  Akvo FLOW is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY;
- *  without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
- *  See the GNU Affero General Public License included below for more details.
+ *  Akvo Flow is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *  The full license text can also be seen at <http://www.gnu.org/licenses/agpl.html>.
+ *  You should have received a copy of the GNU General Public License
+ *  along with Akvo Flow.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 package org.akvo.flow.activity;
 
+import android.os.Bundle;
+import android.widget.ListView;
+
+import org.akvo.flow.R;
+import org.akvo.flow.data.database.SurveyDbAdapter;
+import org.akvo.flow.domain.FileTransmission;
+import org.akvo.flow.ui.adapter.FileTransmissionArrayAdapter;
+import org.akvo.flow.util.ConstantUtil;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import android.app.ListActivity;
-import android.os.Bundle;
-import android.view.Window;
-
-import org.akvo.flow.R;
-import org.akvo.flow.dao.SurveyDbAdapter;
-import org.akvo.flow.domain.FileTransmission;
-import org.akvo.flow.util.ConstantUtil;
-import org.akvo.flow.ui.adapter.FileTransmissionArrayAdapter;
-
 /**
  * Activity to show the transmission history of all files in a survey submission
- * 
+ *
  * @author Christopher Fagiani
  */
-public class TransmissionHistoryActivity extends ListActivity {
+public class TransmissionHistoryActivity extends BackActivity {
+
     private SurveyDbAdapter databaseAdapter;
-    private Long respondentId;
+    private Long surveyInstanceId;
+    private ListView transmissionsList;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_transmission_history);
+        setupToolBar();
+        transmissionsList = (ListView) findViewById(R.id.transmission_list);
+        surveyInstanceId = getSurveyInstanceId(savedInstanceState);
+        databaseAdapter = new SurveyDbAdapter(this);
+    }
+
+    private Long getSurveyInstanceId(Bundle savedInstanceState) {
+        Long surveyInstanceId;
         if (savedInstanceState != null) {
-            respondentId = savedInstanceState
+            surveyInstanceId = savedInstanceState
                     .getLong(ConstantUtil.RESPONDENT_ID_KEY);
         } else {
             Bundle extras = getIntent().getExtras();
-            respondentId = extras != null ? extras
+            surveyInstanceId = extras != null ? extras
                     .getLong(ConstantUtil.RESPONDENT_ID_KEY) : null;
         }
-        setContentView(R.layout.transmissionhistory);
-        databaseAdapter = new SurveyDbAdapter(this);
-
+        return surveyInstanceId;
     }
 
     public void onResume() {
         super.onResume();
         databaseAdapter.open();
-        getData();
+        getTransmissionData();
     }
 
-    private void getData() {
-        List<FileTransmission> transmissionList = databaseAdapter.getFileTransmissions(respondentId);
+    private void getTransmissionData() {
+        List<FileTransmission> transmissionList = databaseAdapter
+                .getFileTransmissions(surveyInstanceId);
+        displayTransmissionData(transmissionList);
+    }
+
+    private void displayTransmissionData(List<FileTransmission> transmissionList) {
         FileTransmissionArrayAdapter adapter = new FileTransmissionArrayAdapter(
-                this, R.layout.transmissionrow,
+                this, R.layout.transmission_history_row,
                 transmissionList != null ? transmissionList
                         : new ArrayList<FileTransmission>());
-        setListAdapter(adapter);
+        transmissionsList.setAdapter(adapter);
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         if (outState != null) {
-            outState.putLong(ConstantUtil.RESPONDENT_ID_KEY, respondentId);
+            outState.putLong(ConstantUtil.RESPONDENT_ID_KEY, surveyInstanceId);
         }
     }
 
-    protected void onDestroy() {
-        super.onDestroy();
-    }
-
+    @Override
     protected void onPause() {
         if (databaseAdapter != null) {
             databaseAdapter.close();
         }
         super.onPause();
     }
-
 }
